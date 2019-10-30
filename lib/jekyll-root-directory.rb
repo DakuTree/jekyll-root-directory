@@ -1,21 +1,25 @@
+require "fileutils"
 require "find"
 
-module Jekyll
-	Hooks.register :site, :post_write do |site|
-		root_dir = "#{site.source}/_root"
+class RootDirectoryPlugin
+	def initialize(site)
+		@site = site
+		@root_dir = "#{site.source}/_root"
+	end
 
-		Find.find("#{root_dir}").select do |filename|
-			filename = filename.gsub("#{root_dir}/", "")
-			path     = "#{root_dir}/#{filename}"
+	def move_files()
+		Find.find("#{@root_dir}").select do |filename|
+			filename = filename.gsub("#{@root_dir}/", "")
+			path     = "#{@root_dir}/#{filename}"
 
 			if File.file?("#{path}")
 				# There doesn't seem to be a native Jekyll method to copy + flatten a subfolder :|
 				# This means we need to do it manually.
 
 				# We can't use StaticFile as it keeps the subfolder used, but we need it for modify times
-				sFile = Jekyll::StaticFile.new(site, site.source, "_root", filename)
+				sFile = Jekyll::StaticFile.new(@site, @site.source, "_root", filename)
 
-				dest_path = "#{site.config['destination']}/#{filename}"
+				dest_path = "#{@site.config['destination']}/#{filename}"
 
 				FileUtils.mkdir_p(File.dirname(dest_path))
 				FileUtils.rm(dest_path) if File.exist?(dest_path)
@@ -32,5 +36,14 @@ module Jekyll
 				end
 			end
 		end
+	end
+end
+
+
+module Jekyll
+	Hooks.register :site, :post_write do |site|
+		plugin = RootDirectoryPlugin.new(site)
+
+		plugin.move_files()
 	end
 end

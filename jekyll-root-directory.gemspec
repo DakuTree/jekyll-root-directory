@@ -1,7 +1,7 @@
 # coding: utf-8
 Gem::Specification.new do |spec|
   spec.name          = "jekyll-root-directory"
-  spec.version       = "0.0.4"
+  spec.version       = "1.0.4"
   spec.date          = "2019-10-30"
   spec.authors       = ["Angus Johnston"]
   spec.email         = ["admin+rubygems@codeanimu.net"]
@@ -17,4 +17,6 @@ Gem::Specification.new do |spec|
   spec.metadata["changelog_uri"]   = spec.homepage + "/blob/master/CHANGELOG.md"
 
   spec.files = ["lib/jekyll-root-directory.rb"]
+
+  spec.add_runtime_dependency "jekyll", ">= 3.7", "< 5.0"
 end
